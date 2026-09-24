@@ -1,0 +1,16 @@
+{
+  "name": "bilibili-jev-filter",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Quantumult X response filter for Bilibili, powered by TypeSafe Jev and configured with BoxJS",
+  "license": "MIT",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check scripts/bilibili-filter.js && node tools/build.mjs --check",
+    "build": "node tools/build.mjs",
+    "replay": "node tools/replay.mjs",
+    "smoke": "node tools/smoke.mjs",
+    "evaluate": "node tools/evaluate.mjs"
+  }
+}

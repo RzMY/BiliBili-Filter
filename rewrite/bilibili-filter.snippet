@@ -1,0 +1,9 @@
+#!name = BiliBili Jev Filter
+#!desc = QX 推荐过滤，默认高质量精选；在 BoxJS 选择预设并配置 TypeSafe Jev
+# Version: 0.2.0
+
+^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index(?:\/story)?\/?(?:\?|$) url script-response-body https://raw.githubusercontent.com/RzMY/BiliBili-Filter/refs/heads/main/scripts/bilibili-filter.js
+^https:\/\/api\.bilibili\.com\/x\/web-interface\/(?:wbi\/)?index\/top\/feed\/rcmd\/?(?:\?|$) url script-response-body https://raw.githubusercontent.com/RzMY/BiliBili-Filter/refs/heads/main/scripts/bilibili-filter.js
+^https:\/\/api\.bilibili\.com\/x\/web-interface\/archive\/related\/?(?:\?|$) url script-response-body https://raw.githubusercontent.com/RzMY/BiliBili-Filter/refs/heads/main/scripts/bilibili-filter.js
+
+hostname = app.bilibili.com, api.bilibili.com

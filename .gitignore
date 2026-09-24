@@ -1,0 +1,19 @@
+# Captures contain account identifiers, signed URLs and session credentials.
+*.har
+*.har.*
+.local/
+# Local archives may contain captures, credentials and unpublished drafts.
+/archive/
+.env
+.env.*
+!.env.example
+node_modules/
+coverage/
+dist/
+*.log
+.DS_Store
+docs/
+.github/
+presets/
+test/
+tools/

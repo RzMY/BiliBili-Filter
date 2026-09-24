@@ -1,0 +1,304 @@
+{
+  "id": "bilibili.jev.filter.subscription",
+  "name": "BiliBili Jev Filter",
+  "description": "Quantumult X 推荐过滤 · 按可用元数据优化 · 可读模型结果日志",
+  "apps": [
+    {
+      "id": "bilibili.jev.filter",
+      "name": "B站推荐过滤 · Jev",
+      "desc": "主程序在 QX 响应重写中运行，BoxJS 仅管理 QX 持久配置。",
+      "keys": [
+        "bili_filter_enabled",
+        "bili_filter_apiKey",
+        "bili_filter_endpoint",
+        "bili_filter_model",
+        "bili_filter_promptPreset",
+        "bili_filter_dryRun",
+        "bili_filter_preserveFollowed",
+        "bili_filter_removeAds",
+        "bili_filter_allowMids",
+        "bili_filter_blockMids",
+        "bili_filter_blockProbability",
+        "bili_filter_minConfidence",
+        "bili_filter_signalThreshold",
+        "bili_filter_batchSize",
+        "bili_filter_maxItems",
+        "bili_filter_maxRequests",
+        "bili_filter_concurrency",
+        "bili_filter_timeoutMs",
+        "bili_filter_budgetMs",
+        "bili_filter_cacheTtlHours",
+        "bili_filter_cacheMaxEntries",
+        "bili_filter_logEnabled",
+        "bili_filter_logModelResults",
+        "bili_filter_logTitles",
+        "bili_filter_debug",
+        "bili_filter_notifyEnabled",
+        "bili_filter_notifyIntervalSeconds",
+        "bili_filter_policy",
+        "bili_filter_questions",
+        "bili_filter_rules",
+        "bili_filter_keepRule",
+        "bili_filter_last_report"
+      ],
+      "settings": [
+        {
+          "id": "bili_filter_enabled",
+          "name": "启用过滤",
+          "val": true,
+          "type": "boolean",
+          "desc": "关闭后所有响应原样返回。"
+        },
+        {
+          "id": "bili_filter_apiKey",
+          "name": "TypeSafe API Key",
+          "val": "",
+          "type": "text",
+          "desc": "仅保存在当前 QX 的 $prefs。请粘贴自己的 Key；不要分享包含 Key 的 BoxJS 备份。"
+        },
+        {
+          "id": "bili_filter_endpoint",
+          "name": "TypeSafe 完整接口地址",
+          "val": "https://api.typesafe.ai/v1/systemone",
+          "type": "text",
+          "desc": "默认 https://api.typesafe.ai/v1/systemone；不是 Chat Completions 接口。"
+        },
+        {
+          "id": "bili_filter_model",
+          "name": "Jev 模型",
+          "val": "jev-latest",
+          "type": "text",
+          "desc": "默认 jev-latest；可填写官方支持的版本，例如 jev-1.13.0。"
+        },
+        {
+          "id": "bili_filter_promptPreset",
+          "name": "提示词预设",
+          "val": "high_quality",
+          "type": "selects",
+          "desc": "精选过滤较确定的普通消遣，严格优化版过滤明确的普通消遣；均保留无法判断的内容。原版归档为 strict_legacy。选择自定义后，下方字段才生效。",
+          "items": [
+            {
+              "key": "high_quality",
+              "label": "高质量精选（默认）"
+            },
+            {
+              "key": "strict",
+              "label": "严格过滤（优化版）"
+            },
+            {
+              "key": "strict_legacy",
+              "label": "严格过滤（原版）"
+            },
+            {
+              "key": "custom",
+              "label": "自定义"
+            }
+          ]
+        },
+        {
+          "id": "bili_filter_dryRun",
+          "name": "仅观察（不删除）",
+          "val": false,
+          "type": "boolean",
+          "desc": "仍会调用模型，最近报告显示 wouldRemove。适合调试自定义政策。"
+        },
+        {
+          "id": "bili_filter_preserveFollowed",
+          "name": "保留已关注 UP",
+          "val": false,
+          "type": "boolean",
+          "desc": "默认关闭。开启后显式已关注的视频跳过质量判断；黑名单仍优先于该开关。"
+        },
+        {
+          "id": "bili_filter_removeAds",
+          "name": "移除明确广告卡",
+          "val": true,
+          "type": "boolean",
+          "desc": "根据返回字段中的广告标记识别，不调用模型。"
+        },
+        {
+          "id": "bili_filter_allowMids",
+          "name": "UP 白名单",
+          "val": "",
+          "type": "textarea",
+          "desc": "UID，以逗号或换行分隔。优先于所有过滤规则。",
+          "autoGrow": true,
+          "rows": 5
+        },
+        {
+          "id": "bili_filter_blockMids",
+          "name": "UP 黑名单",
+          "val": "",
+          "type": "textarea",
+          "desc": "UID，以逗号或换行分隔。在白名单之后、关注保护之前生效。",
+          "autoGrow": true,
+          "rows": 5
+        },
+        {
+          "id": "bili_filter_blockProbability",
+          "name": "自定义分类删除概率",
+          "val": 0.65,
+          "type": "number",
+          "desc": "0–1，默认 0.65。仅作为未写 threshold 的自定义规则的默认值；内置预设使用规则内固定阈值，日志可查看。"
+        },
+        {
+          "id": "bili_filter_minConfidence",
+          "name": "自定义最低置信度",
+          "val": 0.3,
+          "type": "number",
+          "desc": "0–1，默认 0.30；用于没有单独设置 minConfidence 的 choice / score 规则。"
+        },
+        {
+          "id": "bili_filter_signalThreshold",
+          "name": "自定义单项风险阈值",
+          "val": 0.85,
+          "type": "number",
+          "desc": "0–1，默认 0.85；用于没有单独设置 threshold 的 noul 规则。"
+        },
+        {
+          "id": "bili_filter_batchSize",
+          "name": "每批视频数",
+          "val": 6,
+          "type": "number",
+          "desc": "1–12，默认 6。一个 state 放入多条视频，各问题显式指定索引。"
+        },
+        {
+          "id": "bili_filter_maxItems",
+          "name": "每次最多判断视频数",
+          "val": 36,
+          "type": "number",
+          "desc": "1–100，默认 36；超出部分保留。缓存命中不占此额度。"
+        },
+        {
+          "id": "bili_filter_maxRequests",
+          "name": "每次最多 API 请求数",
+          "val": 6,
+          "type": "number",
+          "desc": "1–12，默认 6；不重试失败请求。"
+        },
+        {
+          "id": "bili_filter_concurrency",
+          "name": "并发请求数",
+          "val": 2,
+          "type": "number",
+          "desc": "1–3，默认 2。较低值可降低限流概率。"
+        },
+        {
+          "id": "bili_filter_timeoutMs",
+          "name": "单请求等待上限（毫秒）",
+          "val": 2500,
+          "type": "number",
+          "desc": "100–10000，默认 2500；超时批次保留，晚到的结果不会应用。"
+        },
+        {
+          "id": "bili_filter_budgetMs",
+          "name": "总等待预算（毫秒）",
+          "val": 6500,
+          "type": "number",
+          "desc": "200–20000，默认 6500；不要超过你的 QX 脚本执行时限。"
+        },
+        {
+          "id": "bili_filter_cacheTtlHours",
+          "name": "缓存有效期（小时）",
+          "val": 6,
+          "type": "number",
+          "desc": "0–168，默认 6；0 禁用缓存。提示词、模型、规则或特征变化会自动换缓存。"
+        },
+        {
+          "id": "bili_filter_cacheMaxEntries",
+          "name": "缓存条目上限",
+          "val": 500,
+          "type": "number",
+          "desc": "0–1000，默认 500；仅存特征摘要、判定和到期时间。"
+        },
+        {
+          "id": "bili_filter_logEnabled",
+          "name": "输出运行日志",
+          "val": true,
+          "type": "boolean",
+          "desc": "默认开启。记录开始、过滤摘要和异常类别；关闭后同时关闭详细调试日志。"
+        },
+        {
+          "id": "bili_filter_logModelResults",
+          "name": "输出逐视频模型结果",
+          "val": true,
+          "type": "boolean",
+          "desc": "默认开启。显示视频ID、判定原因、分类及各选项概率、置信度、单项风险；缓存命中也可查看保存的结果。"
+        },
+        {
+          "id": "bili_filter_logTitles",
+          "name": "日志显示视频标题",
+          "val": false,
+          "type": "boolean",
+          "desc": "默认关闭。开启后逐视频日志额外显示截断标题，仅输出到本机 QX 日志，不写入缓存或通知。"
+        },
+        {
+          "id": "bili_filter_debug",
+          "name": "详细调试日志",
+          "val": false,
+          "type": "boolean",
+          "desc": "默认关闭。额外记录候选扫描、API 批次耗时和通知限频。不打印凭证或完整请求。"
+        },
+        {
+          "id": "bili_filter_notifyEnabled",
+          "name": "开启 QX 通知",
+          "val": false,
+          "type": "boolean",
+          "desc": "默认关闭。开启后通知过滤结果、仅观察结果和需处理的异常；没有变化时不通知。还需在 iOS 允许 QX 发送通知。"
+        },
+        {
+          "id": "bili_filter_notifyIntervalSeconds",
+          "name": "同类通知最小间隔（秒）",
+          "val": 60,
+          "type": "number",
+          "desc": "0–3600，默认 60。过滤、仅观察与各类异常分别限频；0 表示每次符合条件都通知。"
+        },
+        {
+          "id": "bili_filter_policy",
+          "name": "自定义政策 / 提示词",
+          "val": "按标题、简介、分区和标签判断内容方向，不评价未见的画面或制作水平。明确的讲解主题、经验、技巧、创作或挑战目标即可支持值得看，无需论文、源码或长简介。只有无法辨认内容时选 uncertain，缺简介本身不扣分。粉丝、播放和互动仅作弱参考，不能决定质量。",
+          "type": "textarea",
+          "desc": "仅选择自定义预设时生效；初始内容为高质量精选。切换内置预设不会清除这些自定义内容。",
+          "autoGrow": true,
+          "rows": 5
+        },
+        {
+          "id": "bili_filter_questions",
+          "name": "自定义结构化问题（JSON）",
+          "val": "{\n  \"quality\": {\n    \"type\": \"choice\",\n    \"instructions\": \"这条推荐最接近哪种内容？\",\n    \"criteria\": {\n      \"keep\": \"有具体主题的讲解、经验、技巧、分析，或原创故事、音乐、美术、制作、游戏挑战/战术等有内容的作品。\",\n      \"ordinary\": \"主要是热梗、随手片段、反应、日常闲聊、情绪感叹、循环歌单或剧情/新闻复述，看不出具体讲解、观点或创作目标。\",\n      \"block\": \"营销引流、暴富承诺、纯性暗示/猎奇、群体辱骂引战、明显重复灌水或机械搬运。\",\n      \"uncertain\": \"标题和其他字段无法辨认内容方向，或线索冲突；不是仅仅缺少简介。\"\n    }\n  },\n  \"clickbait\": {\n    \"type\": \"noul\",\n    \"instructions\": \"标题是否靠虚假收益、夸大后果或隐瞒主题诱骗点击？有具体主题的疑问句、幽默和修辞不算。\"\n  },\n  \"spam\": {\n    \"type\": \"noul\",\n    \"instructions\": \"是否主要在推销、加群引流或发布无实质内容的重复灌水？作品中的正常求赞、介绍工具和分享教程不算。\"\n  }\n}",
+          "type": "textarea",
+          "desc": "仅自定义预设生效。Jev 原生 questions，支持 choice / noul / score，最多 12 项。脚本自动绑定每条视频，禁止填 OpenAI messages。",
+          "autoGrow": true,
+          "rows": 14
+        },
+        {
+          "id": "bili_filter_rules",
+          "name": "自定义删除规则（JSON）",
+          "val": "[\n  {\n    \"question\": \"quality\",\n    \"option\": \"block\",\n    \"threshold\": 0.65,\n    \"minConfidence\": 0.3\n  },\n  {\n    \"question\": \"quality\",\n    \"option\": \"ordinary\",\n    \"threshold\": 0.6,\n    \"minConfidence\": 0.25\n  },\n  {\n    \"question\": \"clickbait\",\n    \"threshold\": 0.85\n  },\n  {\n    \"question\": \"spam\",\n    \"threshold\": 0.85\n  }\n]",
+          "type": "textarea",
+          "desc": "仅自定义预设生效。任一规则命中即删除。choice 需 option；noul 用概率；score 需 operator 和 threshold。[] 只关闭删除规则，仍须通过保留门槛。",
+          "autoGrow": true,
+          "rows": 5
+        },
+        {
+          "id": "bili_filter_keepRule",
+          "name": "自定义保留门槛（JSON）",
+          "val": "null",
+          "type": "textarea",
+          "desc": "仅自定义预设生效，默认 null（关闭）。可自行设置 choice 正向门槛，但缺元数据时容易过度过滤。",
+          "autoGrow": true,
+          "rows": 5
+        },
+        {
+          "id": "bili_filter_last_report",
+          "name": "最近一次过滤报告",
+          "val": "",
+          "type": "textarea",
+          "autoGrow": true,
+          "rows": 8,
+          "desc": "脚本运行后写入；重新加载应用数据查看。只有统计，不含标题和 Key；手动编辑不会改变过滤结果。"
+        }
+      ]
+    }
+  ]
+}
